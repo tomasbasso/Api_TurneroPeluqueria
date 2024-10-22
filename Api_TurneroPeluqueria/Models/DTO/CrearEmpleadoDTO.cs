@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Api_TurneroPeluqueria.Models
+namespace Api_TurneroPeluqueria.Models.DTO
 {
-    public class Empleado
+    public class CrearEmpleadoDTO
     {
-        [Key]
-        public int Id { get; set; }
 
         [Required(ErrorMessage = "El nombre es obligatorio")]
         public string Nombre { get; set; }
@@ -23,10 +21,5 @@ namespace Api_TurneroPeluqueria.Models
         public string Telefono { get; set; }
 
         public string Especialidad { get; set; }
-
-
-        // Relación: un empleado puede tener varios turnos
-        public List<Turno> Turnos { get; set; }
     }
-
 }

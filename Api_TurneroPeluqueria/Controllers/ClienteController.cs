@@ -20,7 +20,7 @@ namespace Api_TurneroPeluqueria.Controllers
                 _context = context;
             }
             ////////BUSCAR TODOS//////////////////////////AUTOMAPER
-            [HttpGet(Name = "ObtenerTodos")]
+            [HttpGet("ObtenerTodos")]
             public async Task<IActionResult> ObtenerTodos()
             {
                 try
@@ -56,12 +56,12 @@ namespace Api_TurneroPeluqueria.Controllers
                 }
             }
 
-            [HttpPost]
+            [HttpPost("CrearCliente")]
             public async Task<IActionResult> Crear(CrearClienteDTO clientedto)
             {
                 try
                 {
-                    // Mapea el DTO a la entidad Usuario
+                    
                     var cliente = new Cliente
                     {
 
@@ -87,7 +87,7 @@ namespace Api_TurneroPeluqueria.Controllers
                 }
             }
             //////////BORRAR//////////
-            [HttpDelete("{id:int}")]
+            [HttpDelete("Borrar por {id:int}")]
             public async Task<IActionResult> Borrar([FromRoute] int id)
             {
                 try
@@ -108,7 +108,7 @@ namespace Api_TurneroPeluqueria.Controllers
                     return BadRequest(ex.Message);
                 }
             }
-            [HttpPut("{id:int}")]
+            [HttpPut("Modificar por {id:int}")]
             public async Task<IActionResult> Modificar([FromBody] Cliente cliente, [FromRoute] int id)
             {
                 try
