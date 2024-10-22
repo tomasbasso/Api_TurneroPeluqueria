@@ -1,0 +1,6 @@
+@Api_TurneroPeluqueria_HostAddress = http://localhost:5103
+
+GET {{Api_TurneroPeluqueria_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
