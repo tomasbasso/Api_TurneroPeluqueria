@@ -53,7 +53,6 @@ public class TurneroDbContext : DbContext
 
         modelBuilder.Entity<Turno>()
             .Property(t => t.Estado)
-            .HasMaxLength(50)
-            .IsRequired();
+            .HasDefaultValue("Activo");
     }
 }
