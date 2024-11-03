@@ -1,7 +1,10 @@
-﻿namespace Api_TurneroPeluqueria.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Api_TurneroPeluqueria.Models
 {
     public class HorarioDisponible
     {
+        [Key]
         public int IdHorario { get; set; }
 
         // Relación con Usuario (Peluquero)

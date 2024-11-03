@@ -11,9 +11,9 @@ namespace Api_TurneroPeluqueria.Controllers
     [ApiController]
     public class UsuarioController : ControllerBase
     {
-        private readonly TurneroPeluqueriaContext _context;
+        private readonly TurneroDbContext _context;
 
-        public UsuarioController(TurneroPeluqueriaContext context)
+        public UsuarioController(TurneroDbContext context)
         {
             _context = context;
         }
@@ -141,25 +141,27 @@ namespace Api_TurneroPeluqueria.Controllers
         [HttpPost("ValidarCredencial")]
         public async Task<IActionResult> ValidarCredencial([FromBody] UsuarioLoginDTO usuario)
         {
-            var existeLogin = await _context.Usuarios
-                .AnyAsync(x => x.Email.Equals(usuario.Email) && x.Contraseña.Equals(usuario.Contraseña));
+            // Realiza una sola consulta para obtener el usuario y verifica si existe.
+            var usuarioLogin = await _context.Usuarios
+                .Where(x => x.Email.Equals(usuario.Email) && x.Contraseña.Equals(usuario.Contraseña))
+                .Select(x => new LoginResponseDto
+                {
+                    IdUsuario = x.IdUsuario,
+                    Nombre = x.Nombre,
+                    Email = x.Email,
+                    IdRol = x.IdRol
+                })
+                .FirstOrDefaultAsync();
 
-            if (!existeLogin)
+            // Si el usuario no existe, retorna un error 404.
+            if (usuarioLogin == null)
             {
                 return NotFound("Usuario o contraseña incorrectos");
             }
 
-            var usuarioLogin = await _context.Usuarios.FirstOrDefaultAsync(x => x.Email.Equals(usuario.Email));
-
-            // Crear una respuesta con los datos del usuario autenticado
-            UsuarioLoginDTO usuarioResponse = new UsuarioLoginDTO()
-            {
-                Email = usuarioLogin.Email,
-                IdRol = usuarioLogin.IdRol
-            };
-
-            // Retornar la respuesta con los datos del usuario
-            return Ok(usuarioResponse);
+            // Retorna la respuesta con los datos del usuario autenticado.
+            return Ok(usuarioLogin);
         }
+
     }
 }

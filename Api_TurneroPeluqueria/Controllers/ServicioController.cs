@@ -11,9 +11,9 @@ namespace Api_TurneroPeluqueria.Controllers
     [ApiController]
     public class ServicioController : ControllerBase
     {
-        private readonly TurneroPeluqueriaContext _context;
+        private readonly TurneroDbContext _context;
 
-        public ServicioController(TurneroPeluqueriaContext context)
+        public ServicioController(TurneroDbContext context)
         {
             _context = context;
         }

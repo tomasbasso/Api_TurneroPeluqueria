@@ -5,14 +5,21 @@ namespace Api_TurneroPeluqueria.Models
 {
     public class Turno
     {
+        [Key]
         public int IdTurno { get; set; }
 
         // Relación con Usuario (Cliente)
         public int IdUsuario { get; set; }
+
+        [ForeignKey("IdUsuario")]
+        [InverseProperty("TurnosCliente")]
         public Usuario Usuario { get; set; }
 
         // Relación con Usuario (Peluquero)
         public int IdPeluquero { get; set; }
+
+        [ForeignKey("IdPeluquero")]
+        [InverseProperty("TurnosPeluquero")]
         public Usuario Peluquero { get; set; }
 
         // Relación con Servicio

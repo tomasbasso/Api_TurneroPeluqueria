@@ -5,6 +5,7 @@ namespace Api_TurneroPeluqueria.Models
 {
     public class Usuario
     {
+        [Key]
         public int IdUsuario { get; set; }
         public string Nombre { get; set; }
         public string Email { get; set; }

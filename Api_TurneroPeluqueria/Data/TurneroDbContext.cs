@@ -5,8 +5,12 @@ namespace Api_TurneroPeluqueria.Data;
 
 using Microsoft.EntityFrameworkCore;
 
-public class TurneroPeluqueriaContext : DbContext
+public class TurneroDbContext : DbContext
 {
+    public TurneroDbContext(DbContextOptions<TurneroDbContext> options)
+            : base(options) // Llama al constructor base con las opciones
+    {
+    }
     public DbSet<Rol> Roles { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<Servicio> Servicios { get; set; }
@@ -22,17 +26,19 @@ public class TurneroPeluqueriaContext : DbContext
             .WithMany(r => r.Usuarios)
             .HasForeignKey(u => u.IdRol);
 
-        // Relación Turno - Usuario (cliente)
+        // Configuración de la relación entre Turno y Usuario (Cliente)
         modelBuilder.Entity<Turno>()
             .HasOne(t => t.Usuario)
             .WithMany(u => u.TurnosCliente)
-            .HasForeignKey(t => t.IdUsuario);
+            .HasForeignKey(t => t.IdUsuario)
+            .OnDelete(DeleteBehavior.Restrict); // Configura eliminación restrictiva
 
-        // Relación Turno - Usuario (peluquero)
+        // Configuración de la relación entre Turno y Usuario (Peluquero)
         modelBuilder.Entity<Turno>()
             .HasOne(t => t.Peluquero)
             .WithMany(u => u.TurnosPeluquero)
-            .HasForeignKey(t => t.IdPeluquero);
+            .HasForeignKey(t => t.IdPeluquero)
+            .OnDelete(DeleteBehavior.Restrict); // Configura eliminación restrictiva
 
         // Relación Turno - Servicio
         modelBuilder.Entity<Turno>()
