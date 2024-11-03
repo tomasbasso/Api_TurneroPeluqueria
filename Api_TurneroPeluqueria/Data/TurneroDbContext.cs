@@ -3,56 +3,53 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Api_TurneroPeluqueria.Data;
 
-public class TurneroDbContext : DbContext
-{
-    public TurneroDbContext(DbContextOptions<TurneroDbContext> options) : base(options)
-    {
-    }
+using Microsoft.EntityFrameworkCore;
 
-    public DbSet<Cliente> Clientes { get; set; }
+public class TurneroPeluqueriaContext : DbContext
+{
+    public DbSet<Rol> Roles { get; set; }
+    public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<Servicio> Servicios { get; set; }
-    public DbSet<Empleado> Empleados { get; set; }
     public DbSet<Turno> Turnos { get; set; }
+    public DbSet<HorarioDisponible> HorariosDisponibles { get; set; }
+    public DbSet<Pago> Pagos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
+        // Relación Usuario - Rol (1 a muchos)
+        modelBuilder.Entity<Usuario>()
+            .HasOne(u => u.Rol)
+            .WithMany(r => r.Usuarios)
+            .HasForeignKey(u => u.IdRol);
 
-        // Configuración de relaciones
+        // Relación Turno - Usuario (cliente)
         modelBuilder.Entity<Turno>()
-            .HasOne(t => t.Cliente)
-            .WithMany(c => c.Turnos)
-            .HasForeignKey(t => t.ClienteId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasOne(t => t.Usuario)
+            .WithMany(u => u.TurnosCliente)
+            .HasForeignKey(t => t.IdUsuario);
 
+        // Relación Turno - Usuario (peluquero)
+        modelBuilder.Entity<Turno>()
+            .HasOne(t => t.Peluquero)
+            .WithMany(u => u.TurnosPeluquero)
+            .HasForeignKey(t => t.IdPeluquero);
+
+        // Relación Turno - Servicio
         modelBuilder.Entity<Turno>()
             .HasOne(t => t.Servicio)
             .WithMany(s => s.Turnos)
-            .HasForeignKey(t => t.ServicioId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(t => t.IdServicio);
 
-        modelBuilder.Entity<Turno>()
-            .HasOne(t => t.Empleado)
-            .WithMany(e => e.Turnos)
-            .HasForeignKey(t => t.EmpleadoId)
-            .OnDelete(DeleteBehavior.Cascade);
+        // Relación HorarioDisponible - Usuario (peluquero)
+        modelBuilder.Entity<HorarioDisponible>()
+            .HasOne(h => h.Peluquero)
+            .WithMany(u => u.HorariosDisponibles)
+            .HasForeignKey(h => h.IdPeluquero);
 
-        // Restricciones y propiedades adicionales si son necesarias
-        modelBuilder.Entity<Cliente>()
-            .Property(c => c.Email)
-            .IsRequired();
-
-        modelBuilder.Entity<Empleado>()
-            .Property(e => e.Email)
-            .IsRequired();
-
-        modelBuilder.Entity<Servicio>()
-            .Property(s => s.Nombre)
-            .HasMaxLength(100)
-            .IsRequired();
-
-        modelBuilder.Entity<Turno>()
-            .Property(t => t.Estado)
-            .HasDefaultValue("Activo");
+        // Relación Pago - Turno
+        modelBuilder.Entity<Pago>()
+            .HasOne(p => p.Turno)
+            .WithMany(t => t.Pagos)
+            .HasForeignKey(p => p.IdTurno);
     }
 }

@@ -12,11 +12,11 @@ namespace Api_TurneroPeluqueria.Controllers
     {
         private readonly TurneroDbContext _context;
 
-    public TurnoController(TurneroDbContext context)
-    {
-        _context = context;
-    }
-    
+        public TurnoController(TurneroDbContext context)
+        {
+            _context = context;
+        }
+
         [HttpGet("ObtenerClientes")]
         public async Task<IActionResult> ObtenerClientes()
         {
@@ -69,26 +69,26 @@ namespace Api_TurneroPeluqueria.Controllers
         {
             try
             {
-                
+
                 var cliente = await _context.Clientes.FirstOrDefaultAsync(c => c.Nombre == turnoDTO.ClienteNombre);
                 if (cliente == null) return BadRequest("Cliente no encontrado");
 
-                
+
                 var servicio = await _context.Servicios.FirstOrDefaultAsync(s => s.Nombre == turnoDTO.ServicioNombre);
                 if (servicio == null) return BadRequest("Servicio no encontrado");
 
-                
+
                 var empleado = await _context.Empleados.FirstOrDefaultAsync(e => e.Nombre == turnoDTO.EmpleadoNombre);
                 if (empleado == null) return BadRequest("Empleado no encontrado");
 
-              
+
                 var nuevoTurno = new Turno
                 {
                     FechaHora = turnoDTO.Fecha,
                     ClienteId = cliente.Id,
                     ServicioId = servicio.Id,
                     EmpleadoId = empleado.Id,
-                    Observaciones = turnoDTO.Observaciones 
+                    Observaciones = turnoDTO.Observaciones
                 };
 
                 await _context.Turnos.AddAsync(nuevoTurno);
@@ -115,14 +115,14 @@ namespace Api_TurneroPeluqueria.Controllers
 
                 if (turnoExistente == null)
                 {
-                    return NotFound(); 
+                    return NotFound();
                 }
 
                 // Elimina el turno
                 _context.Turnos.Remove(turnoExistente);
                 await _context.SaveChangesAsync();
 
-                return NoContent(); 
+                return NoContent();
             }
             catch (DbUpdateException dbEx)
             {
@@ -135,6 +135,40 @@ namespace Api_TurneroPeluqueria.Controllers
             }
         }
 
+        [HttpPut("Modificar turno por {id:int}")]
+        public async Task<IActionResult> Modificar([FromBody] ModificarTurnoDTO turno, [FromRoute] int id)
+        {
+            try
+            {
+                var TurnoExistente = await _context.Turnos.FindAsync(id);
 
+                if (TurnoExistente == null)
+                {
+                    return NotFound(); // Retornar 404 si no se encuentra el turno
+                }
+
+                // Actualizar propiedades del turno existente
+                TurnoExistente.ClienteId = turno.ClienteId;
+                TurnoExistente.EmpleadoId = turno.EmpleadoId;
+                TurnoExistente.ServicioId = turno.ServicioId;
+                TurnoExistente.FechaHora = turno.FechaHora;
+
+                // Comprobación de estado y observaciones
+                if (!string.IsNullOrEmpty(turno.Estado))
+                    TurnoExistente.Estado = turno.Estado;
+
+                if (!string.IsNullOrEmpty(turno.Observaciones))
+                    TurnoExistente.Observaciones = turno.Observaciones;
+
+                _context.Turnos.Update(TurnoExistente);
+                await _context.SaveChangesAsync();
+
+                return NoContent(); // Retornar 204 No Content si se modifica correctamente
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message); // Retornar error si hay una excepción
+            }
+        }
     }
-}
+    }

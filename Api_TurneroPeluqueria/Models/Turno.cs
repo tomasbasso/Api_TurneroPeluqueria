@@ -1,42 +1,29 @@
 ﻿using Api_TurneroPeluqueria.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-
-public class Turno
+namespace Api_TurneroPeluqueria.Models
 {
-    [Key]
-    public int Id { get; set; }
+    public class Turno
+    {
+        public int IdTurno { get; set; }
 
-    [Required]
-    [Column("id_cliente")]  // Mapea al nombre de la columna en la base de datos
-    public int ClienteId { get; set; }
+        // Relación con Usuario (Cliente)
+        public int IdUsuario { get; set; }
+        public Usuario Usuario { get; set; }
 
-    [ForeignKey("ClienteId")]
-    public Cliente Cliente { get; set; }
+        // Relación con Usuario (Peluquero)
+        public int IdPeluquero { get; set; }
+        public Usuario Peluquero { get; set; }
 
-    [Required]
-    [Column("id_servicio")]  // Mapea al nombre de la columna en la base de datos
-    public int ServicioId { get; set; }
+        // Relación con Servicio
+        public int IdServicio { get; set; }
+        public Servicio Servicio { get; set; }
 
-    [ForeignKey("ServicioId")]
-    public Servicio Servicio { get; set; }
+        public DateTime Fecha { get; set; }
+        public TimeSpan Hora { get; set; }
+        public string Estado { get; set; }
 
-    [Required]
-    [Column("id_empleado")]  // Mapea al nombre de la columna en la base de datos
-    public int EmpleadoId { get; set; }
-
-    [ForeignKey("EmpleadoId")]
-    public Empleado Empleado { get; set; }
-
-    [Required(ErrorMessage = "La fecha y hora del turno es obligatoria")]
-    [Column("fecha_hora")]  // Mapea al nombre de la columna en la base de datos
-    public DateTime FechaHora { get; set; }
-
-    [Required]
-    [StringLength(50)]
-    [Column("estado")]  // Mapea al nombre de la columna en la base de datos
-    public string Estado { get; set; } = "Pendiente";
-
-    [Column("observaciones")]  // Mapea al nombre de la columna en la base de datos
-    public string Observaciones { get; set; }
+        // Relación con Pagos
+        public ICollection<Pago> Pagos { get; set; }
+    }
 }
