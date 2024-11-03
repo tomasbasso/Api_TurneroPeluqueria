@@ -11,9 +11,9 @@ namespace Api_TurneroPeluqueria.Controllers
     [ApiController]
     public class ServicioController : ControllerBase
     {
-        private readonly TurneroDbContext _context;
+        private readonly TurneroPeluqueriaContext _context;
 
-        public ServicioController(TurneroDbContext context)
+        public ServicioController(TurneroPeluqueriaContext context)
         {
             _context = context;
         }
@@ -23,10 +23,11 @@ namespace Api_TurneroPeluqueria.Controllers
         {
             try
             {
-                var lista = await _context.Servicios.Select(u => new VerServiciosDTO
+                var lista = await _context.Servicios.Select(u => new Servicio
                 {
+                    IdServicio=u.IdServicio,
                     Nombre = u.Nombre,
-                    Duracion = u.Duracion,
+                    Descripcion = u.Descripcion,
                     Precio = u.Precio,
 
 
@@ -49,7 +50,7 @@ namespace Api_TurneroPeluqueria.Controllers
                 {
 
                     Nombre = servicioDTO.Nombre,
-                    Duracion = servicioDTO.Duracion,
+                    Descripcion = servicioDTO.Descripcion,
                     Precio = servicioDTO.Precio,
 
                 };
@@ -105,7 +106,7 @@ namespace Api_TurneroPeluqueria.Controllers
             }
         }
         [HttpPut("Modificar por {id:int}")]
-        public async Task<IActionResult> Modificar([FromBody] ModificarServicioDTO servicio, [FromRoute] int id)
+        public async Task<IActionResult> Modificar([FromBody] CrearServicioDTO servicio, [FromRoute] int id)
         {
             try
             {
@@ -114,8 +115,8 @@ namespace Api_TurneroPeluqueria.Controllers
                 if (servicioExistente != null)
                 {
                     if (!string.IsNullOrEmpty(servicio.Nombre)) servicioExistente.Nombre = servicio.Nombre;
-                    servicioExistente.Duracion = servicio.Duracion;
-                    servicioExistente.Precio = servicio.Precio;
+                    if (!string.IsNullOrEmpty(servicio.Nombre)) servicioExistente.Descripcion = servicio.Descripcion;
+                    if (!string.IsNullOrEmpty(servicio.Nombre)) servicioExistente.Precio = servicio.Precio;
 
 
                     _context.Servicios.Update(servicioExistente);

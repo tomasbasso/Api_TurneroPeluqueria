@@ -50,13 +50,13 @@ namespace Api_TurneroPeluqueria.Controllers
                 var usuario = new Usuario
                 {
                     Nombre = usuarioDTO.Nombre,
-                    Apellido = usuarioDTO.Apellido,
                     Email = usuarioDTO.Email,
-                    Contraseña = usuarioDTO.Contraseña,
-                    Rol = usuarioDTO.Rol
+                    Contraseña=usuarioDTO.Contraseña,
+                    Telefono= usuarioDTO.Telefono,
+                    IdRol = usuarioDTO.IdRol,
                 };
 
-                await _context.Usuario.AddAsync(usuario);
+                await _context.Usuarios.AddAsync(usuario);
                 await _context.SaveChangesAsync();
 
                 return Ok();
@@ -77,7 +77,7 @@ namespace Api_TurneroPeluqueria.Controllers
         {
             try
             {
-                var item = await _context.Usuario.FindAsync(id);
+                var item = await _context.Usuarios.FindAsync(id);
                 return Ok(item);
             }
             catch (Exception ex)
@@ -92,11 +92,11 @@ namespace Api_TurneroPeluqueria.Controllers
         {
             try
             {
-                var usuarioExistente = await _context.Usuario.FindAsync(id);
+                var usuarioExistente = await _context.Usuarios.FindAsync(id);
 
                 if (usuarioExistente != null)
                 {
-                    _context.Usuario.Remove(usuarioExistente);
+                    _context.Usuarios.Remove(usuarioExistente);
                     await _context.SaveChangesAsync();
                     return NoContent();
                 }
@@ -110,21 +110,21 @@ namespace Api_TurneroPeluqueria.Controllers
         }
 
         [HttpPut("Modificar/{id:int}")]
-        public async Task<IActionResult> Modificar([FromBody] ModificarUsuarioDTO usuario, [FromRoute] int id)
+        public async Task<IActionResult> Modificar([FromBody] CrearUsuarioDTO usuario, [FromRoute] int id)
         {
             try
             {
-                var usuarioExistente = await _context.Usuario.FindAsync(id);
+                var usuarioExistente = await _context.Usuarios.FindAsync(id);
 
                 if (usuarioExistente != null)
                 {
                     if (!string.IsNullOrEmpty(usuario.Nombre)) usuarioExistente.Nombre = usuario.Nombre;
-                    if (!string.IsNullOrEmpty(usuario.Apellido)) usuarioExistente.Apellido = usuario.Apellido;
                     if (!string.IsNullOrEmpty(usuario.Email)) usuarioExistente.Email = usuario.Email;
                     if (!string.IsNullOrEmpty(usuario.Contraseña)) usuarioExistente.Contraseña = usuario.Contraseña;
-                    if (!string.IsNullOrEmpty(usuario.Rol)) usuarioExistente.Rol = usuario.Rol;
+                    if (!string.IsNullOrEmpty(usuario.Telefono)) usuarioExistente.Telefono = usuario.Telefono;
+                    usuarioExistente.IdRol = usuario.IdRol;
 
-                    _context.Usuario.Update(usuarioExistente);
+                    _context.Usuarios.Update(usuarioExistente);
                     await _context.SaveChangesAsync();
 
                     return NoContent();
@@ -141,7 +141,7 @@ namespace Api_TurneroPeluqueria.Controllers
         [HttpPost("ValidarCredencial")]
         public async Task<IActionResult> ValidarCredencial([FromBody] UsuarioLoginDTO usuario)
         {
-            var existeLogin = await _context.Usuario
+            var existeLogin = await _context.Usuarios
                 .AnyAsync(x => x.Email.Equals(usuario.Email) && x.Contraseña.Equals(usuario.Contraseña));
 
             if (!existeLogin)
@@ -149,13 +149,13 @@ namespace Api_TurneroPeluqueria.Controllers
                 return NotFound("Usuario o contraseña incorrectos");
             }
 
-            var usuarioLogin = await _context.Usuario.FirstOrDefaultAsync(x => x.Email.Equals(usuario.Email));
+            var usuarioLogin = await _context.Usuarios.FirstOrDefaultAsync(x => x.Email.Equals(usuario.Email));
 
             // Crear una respuesta con los datos del usuario autenticado
             UsuarioLoginDTO usuarioResponse = new UsuarioLoginDTO()
             {
                 Email = usuarioLogin.Email,
-                Rol = usuarioLogin.Rol
+                IdRol = usuarioLogin.IdRol
             };
 
             // Retornar la respuesta con los datos del usuario
