@@ -18,22 +18,47 @@ namespace Api_TurneroPeluqueria.Controllers
             _context = context;
         }
 
-        ////////BUSCAR TODOS//////////////////////////AUTOMAPER
-        [HttpGet("ObtenerUsuarios")]
+        //////////BUSCAR TODOS//////////////////////////AUTOMAPER
+        //[HttpGet("ObtenerUsuarios")]
+        //public async Task<IActionResult> ObtenerTodos()
+        //{
+        //    try
+        //    {
+        //        var lista = await _context.Usuarios.Select(u => new VerUsuariosDTO
+        //        {
+        //            IdUsuario = u.IdUsuario,
+        //            Nombre = u.Nombre,
+        //            Email = u.Email,
+        //            Telefono = u.Telefono,
+        //            IdRol = u.IdRol,
+        //        }).ToListAsync();
+
+        //        if (lista == null || lista.Count == 0)
+        //        {
+        //            return NotFound("No se encontraron usuarios.");
+        //        }
+
+        //        return Ok(lista);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new { error = ex.Message });
+        //    }
+        //}
+        [HttpGet(Name = "ObtenerTodos")]
         public async Task<IActionResult> ObtenerTodos()
         {
             try
             {
                 var lista = await _context.Usuarios.Select(u => new VerUsuariosDTO
                 {
-                    IdUsuario=u.IdUsuario,
+                    IdUsuario = u.IdUsuario,
                     Nombre = u.Nombre,
-                    Email= u.Email,
-                    Telefono= u.Telefono,
-                    IdRol=u.IdRol,
-
+                    Email = u.Email,
+                    Telefono = u.Telefono,
+                    IdRol = u.IdRol,
                 })
-                .ToListAsync();
+                    .ToListAsync();
                 return Ok(lista);
             }
             catch (Exception ex)
@@ -41,6 +66,7 @@ namespace Api_TurneroPeluqueria.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
 
         [HttpPost("CrearUsuario")]
         public async Task<IActionResult> Crear(CrearUsuarioDTO usuarioDTO)
